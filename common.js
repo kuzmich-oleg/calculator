@@ -9,8 +9,15 @@ function throw_err() {
 	result = "";
 }
 
+function check(string) {
+	for (i = 1 i < string.length; ++i)
+		if (string[i] == "/" && string[i - 1] == "/") return false;
+	return true;
+}
+
 function calculate() {
 	"use strict";
+	if (!check(temp_string)) throw_err();
 	try {
 		result = eval(temp_string);
 		if (result=== Infinity) {
