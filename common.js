@@ -1,81 +1,95 @@
-var result = "";
-var temp_string = "";
-var optional_box = document.getElementsByClassName("optional-box")[0];
-var result_screen = document.getElementsByClassName("result")[0];
+(function () {
 
-function throw_err() {
+    var result = "";
+    var tempString = "";
+    var optionalBox = document.getElementsByClassName("optional-box")[0];
+    var resultScreen = document.getElementsByClassName("result")[0];
 
-    "use strict";
-    optional_box.style.backgroundColor = "red";
+    function initializeCalculator() {
 
-    setTimeout(function () {
-        optional_box.style.backgroundColor = "white";
-    }, 1000);
-    result = "";
-}
+        function throwErr() {
 
-function check(string) {
-
-    "use strict";
-    var i;
-
-    for (i = 1; i < string.length; i += 1) {
-        if ((string[i] === "/" && string[i - 1] === "/") || (string[i] === "*" && string[i - 1] === "*")) {
-            return false;
+            "use strict";
+            optionalBox.style.backgroundColor = "red";
+    
+            setTimeout(function () {
+                optionalBox.style.backgroundColor = "white";
+            }, 1000);
+            result = "";
         }
-    }
-    return true;
-}
-
-function calculate() {
-
-    "use strict";
-    if (!check(temp_string)) {
-        throw_err();
-    } else {
-
-        try {
-            result = eval(temp_string);
-            if (result === Infinity || -1 * result === Infinity) {
-                throw_err();
+    
+        function check(string) {
+    
+            "use strict";
+            var i;
+    
+            for (i = 1; i < string.length; i += 1) {
+                if ((string[i] === "/" && string[i - 1] === "/") || (string[i] === "*" && string[i - 1] === "*")) {
+                    return false;
+                }
             }
-        } catch (err) {
-            throw_err();
+            return true;
+        }
+    
+        function calculate() {
+    
+            "use strict";
+            if (!check(tempString)) {
+                throwErr();
+            } else {
+    
+                try {
+                    result = eval(tempString);
+                    if (result === Infinity || -1 * result === Infinity) {
+                        throwErr();
+                    }
+                } catch (err) {
+                    throwErr();
+                }
+    
+                if (result) {
+                    resultScreen.innerHTML = result;
+                }
+                tempString = result + "";
+            }
+        }
+    
+        function storeInfo(event) {
+    
+            "use strict";
+            var eventTarget = event.target;
+            var tempId = eventTarget.getAttribute("id");
+    
+            if (tempId) {
+    
+                if (tempId === "equal") {
+                    calculate();
+    
+                } else if (tempId === "backspace") {
+                    tempString = tempString.substring(0, tempString.length - 1);
+    
+                } else {
+                    tempString += eventTarget.innerHTML;
+                }
+                resultScreen.innerHTML = tempString;
+            }
         }
 
-        if (result) {
-            result_screen.innerHTML = result;
-        }
-        temp_string = result + "";
-
+        return {
+            throwErr: throwErr,
+            check: check,
+            calculate: calculate,
+            storeInfo: storeInfo
+        };
     }
-}
 
-function storeInfo(event) {
 
-    "use strict";
-    var ev_tar = event.target;
-    var temp_id = ev_tar.getAttribute("id");
+    window.onload = function () {
+        "use strict";
+        var calculator = initializeCalculator();
 
-    if (temp_id) {
-
-        if (temp_id === "equal") {
-            calculate();		
-
-        } else if (temp_id === "backspace") {			
-            temp_string = temp_string.substring(0, temp_string.length - 1);
-
-        } else {
-            temp_string += ev_tar.innerHTML;
-        }
-        result_screen.innerHTML = temp_string;
-
-    }
-}
-
-window.onload = function () {
-    "use strict";
-    optional_box.addEventListener("click", function (event) {
-        storeInfo(event);
-    });
-};
+        optionalBox.addEventListener("click", function (event) {
+            calculator.storeInfo(event);
+        });
+    };
+})();
